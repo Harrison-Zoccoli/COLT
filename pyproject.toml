@@ -1,0 +1,25 @@
+[project]
+name = "colt"
+version = "0.1.0"
+description = "Repo for EE PipeCat v0 (colt)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.116.0",
+    "flake8>=7.3.0",
+    "loguru>=0.7.3",
+    "mypy>=1.16.1",
+    "numba>=0.61.0",
+    "pip>=25.1.1",
+    "pipecat-ai[cartesia,daily,deepgram,openai,rime,silero]>=0.0.74",
+    "pycodestyle>=2.14.0",
+    "pyflakes>=3.4.0",
+    "pylint>=3.3.7",
+    "pytest>=8.4.1",
+    "python-dotenv>=1.1.1",
+    "ruff>=0.12.2",
+    "soundfile>=0.13.1",
+    "uvicorn>=0.35.0",
+]
+[tool.mypy]
+mypy_path = ["tests"]
