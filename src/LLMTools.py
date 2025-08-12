@@ -30,6 +30,13 @@ class LLMTools:
         """
         forward_to_number = params.arguments["forward_to_number"]
         print(f"normalForwarding called with caller_number: {self.caller_number}, forwarding to: {forward_to_number}")
+        
+        # For LiveKit console mode, just log the forward operation idc abt it for now
+        if self.call_control_id.startswith("livekit_"):
+            logger.info(f"LiveKit mode: Would forward to {forward_to_number}")
+            return f"Forward queued - would connect to lawyer at {forward_to_number}"
+        
+        # Original Telnyx logic for phone calls
         if not self.telnyx_api_key:
             logger.error("TELNYX_API_KEY not found in environment variables")
             return "Error: Telnyx API key not configured"
@@ -50,6 +57,13 @@ class LLMTools:
             str: Success or error message
         """
         print(f"hangupCall called for call_control_id: {self.call_control_id}")
+        
+        # For LiveKit console mode, just log the hangup operation idc abt it for now
+        if self.call_control_id.startswith("livekit_"):
+            logger.info("LiveKit mode: Would hang up call")
+            return "Hangup queued - would end the conversation"
+        
+        # Original Telnyx logic for phone calls
         if not self.telnyx_api_key:
             logger.error("TELNYX_API_KEY not found in environment variables")
             return "Error: Telnyx API key not configured"
@@ -158,12 +172,13 @@ class LLMTools:
 
 
 # Tool definitions for OpenAI function calling
+# for now not n eeded cus ya
 tools = [
     {
         "type": "function",
         "function": {
             "name": "normalForwarding",
-            "description": "Forward the current call to a lawyer. Use this when the user requests to speak with a lawyer or when they need legal assistance that requires human intervention. IMPORTANT: Only call this function AFTER you have already spoken a message to the user indicating that you will forward them (e.g., 'Alright, let me get you connected to our car accident attorney right now' or 'Perfect, I'll forward you to the right attorney now'). Never call this function without first generating a spoken message about the forward.",
+            "description": "Forward the current call to a lawyer. Use this when the user requests to speak with a lawyer or when they need assistance that requires human intervention. IMPORTANT: Only call this function AFTER you have already spoken a message to the user indicating that you will forward them (e.g., 'Alright, let me get you connected to our car accident attorney right now' or 'Perfect, I'll forward you to the right attorney now'). Never call this function without first generating a spoken message about the forward.",
             "parameters": {
                 "type": "object",
                 "properties": {

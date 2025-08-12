@@ -1,14 +1,13 @@
 """
 Audio configuration helper for the voice bot.
-Handles VAD, STT, TTS, and audio mixer setup.
+Handles VAD, STT, and audio mixer setup.
 """
 
 import os
 from loguru import logger
 from pipecat.audio.vad.vad_analyzer import VADParams
 from pipecat.audio.vad.silero import SileroVADAnalyzer
-from pipecat.services.deepgram.stt import DeepgramSTTService, LiveOptions, Language
-from pipecat.services.rime.tts import RimeTTSService
+from pipecat.services.deepgram.stt import DeepgramSTTService, LiveOptions
 from pipecat.audio.mixers.soundfile_mixer import SoundfileMixer
 
 
@@ -22,7 +21,6 @@ class AudioConfig:
         
         # API keys
         self.deepgram_api_key = os.getenv("DEEPGRAM_API_KEY", "")
-        self.rime_api_key = os.getenv("RIME_API_KEY", "")
         
     def create_vad_analyzer(self):
         """Create and configure the VAD analyzer."""
@@ -40,11 +38,23 @@ class AudioConfig:
     
     def create_stt_service(self):
         """Create and configure the Deepgram STT service."""
+        # Get language from environment variable
+        language_env = os.getenv("LANGUAGE", "en").lower()
+        
+        # Map language codes to Deepgram language codes
+        language_mapping = {
+            "en": "en-US",
+            "tr": "tr-TR"
+        }
+        
+        # Default to English if language not supported
+        deepgram_language = language_mapping.get(language_env, "en-US")
+        
         live_options = LiveOptions(
             encoding='linear16',
             channels=1,
             sample_rate=self.sample_rate,
-            language="en-US",
+            language=deepgram_language,
             model="nova-3",
             interim_results=True,
             smart_format=True,
@@ -56,25 +66,6 @@ class AudioConfig:
         return DeepgramSTTService(api_key=self.deepgram_api_key,
                                   base_url="ws://localhost:8081" if os.getenv("ON_PREM", "False").lower() == "true" else "",
                                   live_options=live_options)
-    
-    def create_tts_service(self):
-        """Create and configure the Rime TTS service."""
-        rime_params = RimeTTSService.InputParams(language=Language.EN,
-                                                 speed_alpha=1.0,
-                                                 reduce_latency=False,
-                                                 pause_between_brackets=True,
-                                                 phonemize_between_brackets=False,
-                                                 audioFormat="pcm",
-                                                 sample_rate=self.sample_rate)
-        try:
-            return RimeTTSService(api_key=self.rime_api_key,
-                                 url="ws://localhost:8001/" if os.getenv("ON_PREM", "False").lower() == "true" else "wss://users.rime.ai/ws2",
-                                 model="mistv2",
-                                 voice_id="marissa",
-                                 params=rime_params)
-        except Exception as e:
-            logger.error(f"Failed to initialize RimeTTSService: {e}")
-            raise
     
     async def create_audio_mixer(self):
         """Create and configure the background audio mixer."""
@@ -98,8 +89,5 @@ class AudioConfig:
         """Validate that required API keys are present."""
         if not self.deepgram_api_key:
             logger.error("Missing Deepgram API key!")
-            return False
-        if not self.rime_api_key:
-            logger.error("Missing Rime API key!")
             return False
         return True 

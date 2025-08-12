@@ -1,4 +1,4 @@
-COLT - 
+COLT - ignore ts pls
 
 
 
@@ -8,14 +8,6 @@ uv python pin 3.12
 uv venv --python 3.12
 source .venv/bin/activate
 
-# source .venv/Scripts/activate for windows
-# hi 2
-then this: 
-uv add -U pip
-uv add -U pyflakes pycodestyle flake8 pylint pytest mypy ruff
-uv add -U python-dotenv loguru
-uv add -U uvicorn fastapi
-uv add -U "pipecat-ai[silero,deepgram,openai,cartesia,rime,daily]
 
 # .env add
 

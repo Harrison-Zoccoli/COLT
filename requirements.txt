@@ -80,3 +80,7 @@ uvicorn==0.35.0
 websockets==13.1
 yarl==1.20.1
 fastapi[standard]
+livekit[agents]>=0.5.0
+livekit-plugins>=0.5.0
+elevenlabs>=0.3.0
+requests>=2.31.0

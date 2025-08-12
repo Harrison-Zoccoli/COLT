@@ -11,7 +11,7 @@ dependencies = [
     "mypy>=1.16.1",
     "numba>=0.61.0",
     "pip>=25.1.1",
-    "pipecat-ai[cartesia,daily,deepgram,openai,rime,silero]>=0.0.74",
+    "pipecat-ai[daily,deepgram,openai,silero]>=0.0.74",
     "pycodestyle>=2.14.0",
     "pyflakes>=3.4.0",
     "pylint>=3.3.7",
@@ -20,6 +20,9 @@ dependencies = [
     "ruff>=0.12.2",
     "soundfile>=0.13.1",
     "uvicorn>=0.35.0",
+    "livekit[agents]>=0.5.0",
+    "livekit-plugins>=0.5.0",
+    "elevenlabs>=0.3.0",
 ]
 [tool.mypy]
 mypy_path = ["tests"]
